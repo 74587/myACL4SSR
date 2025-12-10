@@ -2,16 +2,11 @@ function main(proxies, metadata) {
   return proxies.filter(p => {
     if (metadata.groupID === 1) {  // 只针对第二个订阅
       const name = p.name || '';
-      // 用正则匹配 emoji 🇺🇸 (U+1F1FA U+1F1F8) 和文字关键词
-      if (/[\u{1F1FA}\u{1F1F8}]/.test(name) ||  // 匹配 🇺🇸 (surrogate pair 兼容)
-          name.includes('美国') ||
-          name.includes('US') ||
-          name.includes('us') ||
-          name.includes('圣何塞') ||
-          name.includes('洛杉矶')) {
-        return false;  // 删除美国节点
+      // 只判断是否包含 "美国" 这两个汉字（最稳定、最不会失效）
+      if (name.indexOf('美国') !== -1) {
+        return false;  // 删除所有含 "美国" 的节点（包括 🇺🇸 美国圣何塞、美国洛杉矶、pq.us 的美国节点等）
       }
     }
-    return true;  // 保留其他
+    return true;
   });
 }
